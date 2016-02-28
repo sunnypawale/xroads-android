@@ -35,7 +35,7 @@ public class GooglePlayServicesActivity extends Activity implements
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-    private static final String TAG = "GooglePlayServicesActivity";
+    private static final String TAG = "GooglePlayService";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     protected LocationRequest mLocationRequest;

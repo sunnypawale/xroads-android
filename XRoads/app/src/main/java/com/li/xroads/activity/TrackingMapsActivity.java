@@ -11,6 +11,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.li.xroads.fragment.LocationFragment;
+import com.li.xroads.util.PropertiesReader;
 
 public class TrackingMapsActivity extends Activity implements LocationFragment.OnFragmentInteractionListener{
 
@@ -20,6 +21,7 @@ public class TrackingMapsActivity extends Activity implements LocationFragment.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracking_maps);
+        PropertiesReader reader = new PropertiesReader(this);
         LocationFragment locationFragment = new LocationFragment();
         getFragmentManager().beginTransaction().add(android.R.id.content, locationFragment).commit();
         setUpMapIfNeeded();

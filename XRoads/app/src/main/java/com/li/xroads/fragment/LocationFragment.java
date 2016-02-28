@@ -1,13 +1,16 @@
 package com.li.xroads.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,15 +49,16 @@ public class LocationFragment extends Fragment implements
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-    private static final String TAG = "GooglePlayServicesActivity";
+    private static final String TAG = "LocationFragment";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     protected LocationRequest mLocationRequest;
     private OnFragmentInteractionListener mListener;
 
-    public LocationFragment(){
+    public LocationFragment() {
 
     }
+
     public static LocationFragment newInstance(GoogleApiClient mGoogleApiClient) {
         LocationFragment fragment = new LocationFragment();
         fragment.mGoogleApiClient = mGoogleApiClient;
@@ -65,7 +69,6 @@ public class LocationFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
 
 
     @Override
@@ -81,6 +84,7 @@ public class LocationFragment extends Fragment implements
         createLocationRequest();
         mGoogleApiClient.connect();
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -97,6 +101,7 @@ public class LocationFragment extends Fragment implements
         super.onStop();
         super.onDetach();
         if (mGoogleApiClient != null) {
+            stopLocationUpdates();
             mGoogleApiClient.disconnect();
         }
 
@@ -120,6 +125,11 @@ public class LocationFragment extends Fragment implements
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "GoogleApiClient connected");
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
@@ -158,6 +168,7 @@ public class LocationFragment extends Fragment implements
             return;
         }
     }
+
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
@@ -179,6 +190,10 @@ public class LocationFragment extends Fragment implements
     }
 
     protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }
